@@ -90,6 +90,14 @@ function ListAllBookSubjects($licenseKey,$language){
 * @param integer	licenseKey 	Guid identifying the retailer (required)
 * @return 
 */
+function ListAllBooks($licenseKey){
+	global $url, $config, $objSoapClient;
+	// retreive object
+	$soapObject = print_r($objSoapClient->ListAllBooks(array("licenseKey" => $licenseKey)));
+	$soapArray = objectToArray( $soapObject );
+	// return array
+	return $soapArray;
+}	
 
 
 /** ListBooks 
