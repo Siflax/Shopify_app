@@ -1,7 +1,9 @@
 <?php 
+include '../includes/config.php';
+
 // make call to soap client
-$url= "http://service.pubhub.dk/Retailer/V15/MediaService.asmx?WSDL";
-$config = array( "login" => "bogertilborn@outlook.com", "password" => "Sneb8r", "trace" => 1,"exceptions" => 0);
+$url= soapServer;
+$config = array( "login" => login, "password" => password, "trace" => 1,"exceptions" => 0);
 $objSoapClient = new SoapClient($url,$config);
 
 // general functions:
@@ -11,18 +13,18 @@ $objSoapClient = new SoapClient($url,$config);
 * @param    object  $object	 The object to convert
 * @return   array
 */
-function objectToArray($object)
-{
-    if( !is_object( $object ) && !is_array( $object ) )
-    {
-        return $object;
-    }
-    if( is_object( $object ) )
-    {
-        $object = get_object_vars( $object );
-    }
-    return array_map( 'objectToArray', $object );
-}
+	function objectToArray($object)
+	{
+	    if( !is_object( $object ) && !is_array( $object ) )
+	    {
+	        return $object;
+	    }
+	    if( is_object( $object ) )
+	    {
+	        $object = get_object_vars( $object );
+	    }
+	    return array_map( 'objectToArray', $object );
+	}
 
 // Publizon Operations: 
 
@@ -48,16 +50,15 @@ function objectToArray($object)
 * @param integer	bookId 		The bookId to return (required)
 * @return 	
 */
-
-function GetBook($licenseKey,$bookId){
-	// get book object
-	global $url, $config, $objSoapClient;
-	$soapObject = $objSoapClient->getBook(array("licenseKey" => $licenseKey, bookId => $bookId));	
-	// convert the array to object 
-	$soapArray = objectToArray( $soapObject );
-	// return array
-	return $soapArray;
-}	
+	function GetBook($licenseKey,$bookId){
+		// get book object
+		global $url, $config, $objSoapClient;
+		$soapObject = $objSoapClient->getBook(array("licenseKey" => $licenseKey, bookId => $bookId));	
+		// convert the array to object 
+		$soapArray = objectToArray( $soapObject );
+		// return array
+		return $soapArray;
+	}	
 
 
 /**
@@ -65,11 +66,10 @@ function GetBook($licenseKey,$bookId){
 * @param integer	licenseKey 	Guid identifying the retailer (required)
 * @return 
 */	 
-
-function ListAllBookIds($licenseKey){
-	global $url, $config, $objSoapClient;
-	print_r($objSoapClient->listAllBookIds(array("licenseKey" => $licenseKey)));
-}	
+	function ListAllBookIds($licenseKey){
+		global $url, $config, $objSoapClient;
+		print_r($objSoapClient->listAllBookIds(array("licenseKey" => $licenseKey)));
+	}	
 
 
 /**
@@ -78,11 +78,10 @@ function ListAllBookIds($licenseKey){
 * @param string		language  	Enum defining the language of the returned subjects (DAN=Danish / ENG=English) (required)
 * @return
 */
-
-function ListAllBookSubjects($licenseKey,$language){
-	global $url, $config, $objSoapClient;
-	print_r($objSoapClient->ListAllBookSubjects(array("licenseKey" => $licenseKey, "language"=>$language)));
-}	 
+	function ListAllBookSubjects($licenseKey,$language){
+		global $url, $config, $objSoapClient;
+		print_r($objSoapClient->ListAllBookSubjects(array("licenseKey" => $licenseKey, "language"=>$language)));
+	}	 
 
 
 /** ListAllBooks 
@@ -90,14 +89,14 @@ function ListAllBookSubjects($licenseKey,$language){
 * @param integer	licenseKey 	Guid identifying the retailer (required)
 * @return 
 */
-function ListAllBooks($licenseKey){
-	global $url, $config, $objSoapClient;
-	// retreive object
-	$soapObject = print_r($objSoapClient->ListAllBooks(array("licenseKey" => $licenseKey)));
-	$soapArray = objectToArray( $soapObject );
-	// return array
-	return $soapArray;
-}	
+	function ListAllBooks($licenseKey){
+		global $url, $config, $objSoapClient;
+		// retreive object
+		$soapObject = print_r($objSoapClient->ListAllBooks(array("licenseKey" => $licenseKey)));
+		$soapArray = objectToArray( $soapObject );
+		// return array
+		return $soapArray;
+	}	
 
 
 /** ListBooks 
