@@ -68,7 +68,12 @@ $objSoapClient = new SoapClient($url,$config);
 */	 
 	function ListAllBookIds($licenseKey){
 		global $url, $config, $objSoapClient;
-		print_r($objSoapClient->listAllBookIds(array("licenseKey" => $licenseKey)));
+		$soapObject = $objSoapClient->listAllBookIds(array("licenseKey" => $licenseKey));
+		// convert the array to object 
+		$soapArray = objectToArray( $soapObject );
+		// return array
+		return $soapArray;
+		
 	}	
 
 
@@ -92,7 +97,7 @@ $objSoapClient = new SoapClient($url,$config);
 	function ListAllBooks($licenseKey){
 		global $url, $config, $objSoapClient;
 		// retreive object
-		$soapObject = print_r($objSoapClient->ListAllBooks(array("licenseKey" => $licenseKey)));
+		$soapObject = $objSoapClient->ListAllBooks(array("licenseKey" => $licenseKey));
 		$soapArray = objectToArray( $soapObject );
 		// return array
 		return $soapArray;
@@ -105,6 +110,14 @@ $objSoapClient = new SoapClient($url,$config);
 * @param array		bookIds 	An array of bookIds(required)
 * @return 
 */
+	function ListBooks($licenseKey, $bookIds){
+		global $url, $config, $objSoapClient;
+		// retreive object
+		$soapObject = $objSoapClient->ListBooks(array("licenseKey" => $licenseKey, "bookIds"=>$bookIds));
+		$soapArray = objectToArray( $soapObject );
+		// return array
+		return $soapArray;
+	}	
 	
 
 /** ListModifiedBookIds 
