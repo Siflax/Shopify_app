@@ -4,6 +4,15 @@ include '../Publizon/PublizonOperations.php';
 include '../includes/mySQLconnect.php';
 include '../includes/config.php';
 
+
+
+//function to escape values in array - i have not added mysqli ($db) data, so if encoding problems occur check this
+function escapeArray(&$item) {
+    $item = mysql_real_escape_string($item);
+}
+
+
+
 // get all book IDs
 $AllBookIDs = ListAllBookIds(licenseKey);
 
@@ -11,7 +20,7 @@ $AllBookIDs = ListAllBookIds(licenseKey);
 $BookIdArray = array();
 
 // load selection of book ids into array 
-for ($i=0; $i<10; $i++){
+for ($i=0; $i<15; $i++){
 	$BookIdArray[] = $AllBookIDs["ListAllBookIdsResult"]["BookId"][$i]["_"];
 }
 
@@ -29,22 +38,43 @@ foreach ($books["ListBooksResult"]['Book'] as $bookArray) {
 	 $arrayNull = $bookArray;
 	 $keys = array();
 	 $values = array();
+	 $lastKey="";
 	
 	 // iterate through all key-value pairs of a book
 	foreach ($arrayNull as $key => $value) {
-		// if the value is an array: JSON_encode
+		
+		// * escape value before inserting in MySQL
+		// if the value is an array: escape and JSON_encode
 		if (is_array($value)){
-			$value = JSON_encode($value);
+	
+			// JSON encode array (is escaping) - single and double quotes are formatted (remember to check if output formatting is automatic)
+			$value = JSON_encode($value, JSON_HEX_APOS, JSON_HEX_QUOT);
+						
+		} else {
+			$value = mysqli_real_escape_string($db, $value);
 		}
+		
 		// create variable
 	 	${$key} = "'". $value ."'";
 		// push keys and values to arrays 
 		$keys[]= $key;
-		$values[]= "'". $value ."'";			
+		$values[]= "'". $value ."'";		
+		
+		// * if key is not a column in databse insert it
+		// if key is not yet a column in the database the following will return 0
+		$query =  "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = 'AllPublizonBooks' AND table_schema = 'shopify_app' AND 			column_name =" . "'" . $key  . "'";
+		$columnCheck= $db->query($query);
+		$columnCheckNumRows = $columnCheck->num_rows;
+		
+		// if the key is not in database insert it as column.
+		if ($columnCheckNumRows == 0) {
+			$query = "ALTER TABLE AllPublizonBooks ADD " . $key . " VARCHAR(10000) default NULL after " . $lastKey;
+			$db->query($query);
+		}
+		// save key as lastKey so next iteration can use it
+		$lastKey = $key;
+					
 	}
-	
-	// * if one of the columns is not yet in the MySQL database add that column
-	
 	
 	// * prepare to insert into database
 	// count keys array
@@ -70,8 +100,11 @@ foreach ($books["ListBooksResult"]['Book'] as $bookArray) {
 	}
 	
 	// * insert into database
-	$query = "INSERT INTO AllPublizonBooks (" . $keysString .  ") VALUES (" . $valuesString .")";
-	$db->query($query);
+	// ******** have to add: if (book) does not already exist in databse ********
+	$query = "INSERT IGNORE INTO AllPublizonBooks (" . $keysString .  ") VALUES (" . $valuesString .")";
+	$db->query($query);	
+
 }
+
 
 ?>
