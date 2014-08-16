@@ -1,6 +1,6 @@
 <?php
 	
-include '../Publizon/PublizonOperations.php';
+include 'PublizonOperations.php';
 include '../includes/mySQLconnect.php';
 include '../includes/config.php';
 
@@ -23,7 +23,7 @@ $countBookIDs = count($AllBookIDs["ListAllBookIdsResult"]["BookId"]);
 $BookIdArray = array();
 
 // load selection of book ids into array 
-for ($i=0; $i<120; $i++){
+for ($i=0; $i<130; $i++){
 	$BookIdArray[] = $AllBookIDs["ListAllBookIdsResult"]["BookId"][$i]["_"];
 }
 
