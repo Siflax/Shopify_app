@@ -5,7 +5,8 @@ include '../includes/mySQLconnect.php';
 include '../includes/config.php';
 
 // insert name, date and time of the soap call in database
-$query = "INSERT INTO SoapCalls (`soapCall`) VALUES ('Import all books')";
+$time = gmdate('Y-m-d\TH:i:s');
+$query = "INSERT INTO SoapCalls (`soapCall`, `dateTime`) VALUES ('Import all books','" . $time . "')";
 $call = $db->query($query);	
 
 // if errors echo them
@@ -23,7 +24,7 @@ $countBookIDs = count($AllBookIDs["ListAllBookIdsResult"]["BookId"]);
 $BookIdArray = array();
 
 // load selection of book ids into array
-for ($i=0; $i<100; $i++){
+for ($i=0; $i<10; $i++){
 	$BookIdArray[] = $AllBookIDs["ListAllBookIdsResult"]["BookId"][$i]["_"];
 }
 

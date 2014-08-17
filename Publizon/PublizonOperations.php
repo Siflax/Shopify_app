@@ -219,7 +219,15 @@ $objSoapClient = new SoapClient($url,$config);
 * @param integer	licenseKey 	Guid identifying the retailer (required)
 * @param integer	afterUTC	UTC date and time after which the books should have been added/updated/deleted (required)
 * @return 
-*/
+*/	
+	function ListModifiedBookIds($licenseKey, $afterUTC){
+		global $url, $config, $objSoapClient;
+		// retreive object
+		$soapObject = $objSoapClient->ListModifiedBookIds(array("licenseKey" => $licenseKey, "afterUtc"=>$afterUTC));
+		$soapArray = objectToArray( $soapObject );
+		// return array
+		return $soapArray;
+	}	
 
 
 /** ListModifiedBooks 
@@ -228,7 +236,15 @@ $objSoapClient = new SoapClient($url,$config);
 * @param integer	afterUTC	UTC date and time after which the books should have been added/updated/deleted (required)
 * @return 
 */
-
+function ListModifiedBooks($licenseKey, $afterUTC) {
+	global $url, $config, $objSoapClient;
+	// retreive object
+	$soapObject = $objSoapClient->ListModifiedBooks(array("licenseKey" => $licenseKey, "afterUtc"=>$afterUTC));
+	$soapArray = objectToArray( $soapObject );
+	// return array
+	return $soapArray;
+	
+}
 
 /** ListOrders 
 * Lists all orders between two dates
