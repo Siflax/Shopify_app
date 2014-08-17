@@ -22,8 +22,8 @@ $countBookIDs = count($AllBookIDs["ListAllBookIdsResult"]["BookId"]);
 // create empty book ID array
 $BookIdArray = array();
 
-// load selection of book ids into array 
-for ($i=15460; $i<$countBookIDs; $i++){
+// load selection of book ids into array ****************** change to config value
+for ($i=0; $i<10; $i++){
 	$BookIdArray[] = $AllBookIDs["ListAllBookIdsResult"]["BookId"][$i]["_"];
 }
 
@@ -35,7 +35,7 @@ $chunkedBookIdArray = array_chunk($BookIdArray, 100);
 foreach ($chunkedBookIdArray as $BookIdArraySelection) {
  
 	// list books specified in selection of books array
-	$books = ListBooks("fdc226ef-e1ca-4379-b7b2-bf0b51847328", $BookIdArraySelection);
+	$books = ListBooks(licenseKey, $BookIdArraySelection);
 
 	// define empty array to be used to save books in foreach
 	$arrayNull;
