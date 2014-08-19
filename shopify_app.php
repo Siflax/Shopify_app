@@ -1,14 +1,10 @@
 <?php
 require 'vendor/autoload.php';
 use sandeepshetty\shopify_api;
-echo 'test';
+
 session_start(); //start a session
 
-$db = new Mysqli("localhost", "root", "root", "shopify_app");
-
-if($db->connect_errno){
-  die('Connect Error: ' . $db->connect_errno);
-}
+include 'includes/mySQLconnect.php';
 
 $select_settings = $db->query("SELECT * FROM tbl_appsettings WHERE id = 1");
 $app_settings = $select_settings->fetch_object();
