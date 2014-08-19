@@ -1,5 +1,5 @@
 <?php
-	
+
 require 'vendor/autoload.php';
 use sandeepshetty\shopify_api;
 include 'ShopifyFunctions.php';
@@ -62,6 +62,5 @@ $arguments = array
 // * get product 
 $array = array('published_status'=>'published');
 var_dump(getProduct($array));
-
 
 	

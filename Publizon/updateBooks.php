@@ -26,17 +26,32 @@ $arrayNull;
 // iterate through all books
 foreach ($modifiedBooks["ListModifiedBooksResult"]['NewAndModifiedBooks']['Book'] as $bookArray) {
 
-	// insert each book into table
+	// insert each book into AllPublizonBooks table 
 	$tableName = "AllPublizonBooks";
 	BookToDB($bookArray, $tableName); 
+	// update books in selectBooks table
+	$tableName = "SelectedBooks";
+	$whereColumn = 'BookId';		
+	BookToDBWhere($bookArray, $tableName, $whereColumn);
 	
 }
 
 // * handle removed books
 foreach ($modifiedBooks["ListModifiedBooksResult"]['RemovedBooks']["BookId"] as $bookID) {
-	echo $bookID["_"]. '</br>'. '</br>'. '</br>';
-	// insert each book into table
+
+	// * Delete each book from table 
+	// Delete from AllPublizonBooks table
 	$tableName = "AllPublizonBooks";
+	$query= "DELETE FROM " . $tableName . "	WHERE bookId='" . $bookID["_"] . "'";
+	$call = $db->query($query);	
+	
+	// if errors echo them
+	if (!$call){
+		echo $db->error . '</br>'. '</br>';
+	}
+	
+	// Delete from SelectedBooks table
+	$tableName = "SelecetedBooks";
 	$query= "DELETE FROM " . $tableName . "	WHERE bookId='" . $bookID["_"] . "'";
 	$call = $db->query($query);	
 	

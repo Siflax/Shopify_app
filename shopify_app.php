@@ -23,7 +23,7 @@ if(!empty($_GET['shop']) && empty($_GET['code'])){ //check if the shop name is p
       if(shopify_api\is_valid_request($_GET, $app_settings->shared_secret)){ //check if its a valid request from Shopify        
           $_SESSION['shopify_signature'] = $_GET['signature'];
           $_SESSION['shop'] = $shop;
-          header('Location: http://localhost/shopify_testing/admin.php'); //redirect to the admin page
+          header('Location: http://localhost/Shopify_app/admin.php'); //redirect to the admin page
       }
       
   }else{     
@@ -69,7 +69,7 @@ if(!empty($_GET['shop']) && !empty($_GET['code'])){
   $_SESSION['shopify_signature'] = $_GET['signature'];
   $_SESSION['shop'] = $shop;
 
-  header('Location: http://localhost/shopify_testing/admin.php');
+  header('Location: http://localhost/Shopify_app/admin.php');
 }
 
 /* install app -> guide: http://docs.shopify.com/api/tutorials/oauth
@@ -77,7 +77,7 @@ Url:
 https://shopapptest.myshopify.com/admin/oauth/authorize
 ?client_id=244870c6a5a2e27f58f578925fa3914e
 &scope=write_products,read_orders
-&redirect_uri=http://localhost/shopify_testing/shopify_app.php
+&redirect_uri=http://localhost/Shopify_app/shopify_app.php
 */
 
 ?>
