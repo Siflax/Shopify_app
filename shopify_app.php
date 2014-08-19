@@ -1,7 +1,7 @@
 <?php
 require 'vendor/autoload.php';
 use sandeepshetty\shopify_api;
-
+echo 'test';
 session_start(); //start a session
 
 $db = new Mysqli("localhost", "root", "root", "shopify_app");
