@@ -62,3 +62,13 @@ foreach ($modifiedBooks["ListModifiedBooksResult"]['RemovedBooks']["BookId"] as 
 	
 	
 }
+
+// insert name, date and time of the soap call in database
+$time = gmdate('Y-m-d\TH:i:s');
+$query = "INSERT INTO SoapCalls (`soapCall`, `dateTime`) VALUES ('Update books','" . $time . "')";
+$call = $db->query($query);	
+
+// if errors echo them
+if (!$call){
+	echo $db->error . '</br>'. '</br>';
+}
