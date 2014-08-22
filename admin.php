@@ -82,26 +82,23 @@ if ($_POST["submitRetailPrice"]) {
 			
 		$callArray = $call->fetch_array();	
 		$productId = $callArray["ShopifyBookId"];
-	
-		// get products variants							***************** summon variants id - write to variant after http://docs.shopify.com/api/product_variant
+			
+		// get products variants ID
 		$array = array("fields"=>"variants"); 
 		$productsArray = getProductById($productId, $array);
-		$variantsArray = $productsArray[0]['variants'][0];
-		
-		// put new price into variants array
-		$variantsArray['price'] = $_POST['retailPrice'];
-
+		$variantsArray = $productsArray['variants'][0];
+		$variantId = $variantsArray['id'];
+				
 		// insert new variants array in shopify
 		$arguments = array
 		        (
-		            "product"=>array
+		            "variant"=>array
 		            (
-						"variants"=>$variantsArray
+						"price"=>$_POST['retailPrice']
 		            )
 		        );
-				var_dump($arguments);
-		//updateProduct($productId,$arguments);
-
+				
+		updateVariant($variantId,$arguments);
 }
 	
 	

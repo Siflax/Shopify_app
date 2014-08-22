@@ -27,7 +27,7 @@ function getProduct($array){
 */
 function getProductById($productID, $array){
 	global $shopify;
-	$products = $shopify('GET', '/admin/products.json', $array );
+	$products = $shopify('GET', '/admin/products/' . $productID . '.json', $array );
 	return $products;
 }
 
@@ -52,7 +52,7 @@ function updateProduct($productID, $arguments){
 
 /**
 * Update variant
-* @param    integer $productID	ID of product to be updated
+* @param    integer $variantID	ID of variant to be updated
 * @param    array  $argument  array of arguments with information to be updated
 */
 function updateVariant($variantID, $arguments){
