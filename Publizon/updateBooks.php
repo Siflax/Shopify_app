@@ -1,6 +1,6 @@
 <?php
 	
-include 'PublizonOperations.php';
+include 'publizonFunctions.php';
 include '../includes/mySQLconnect.php';
 include '../includes/config.php';
 

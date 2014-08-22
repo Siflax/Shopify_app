@@ -1,6 +1,6 @@
 <?php
 	
-include 'PublizonOperations.php';
+include 'publizonFunctions.php';
 include '../includes/mySQLconnect.php';
 include '../includes/config.php';
 
@@ -47,5 +47,3 @@ foreach ($chunkedBookIdArray as $BookIdArraySelection) {
 		BookToDB($bookArray, $tableName); 
 	}
 }
-
-?>

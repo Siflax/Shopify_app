@@ -73,7 +73,7 @@ Url:
 https://shopapptest.myshopify.com/admin/oauth/authorize
 ?client_id=244870c6a5a2e27f58f578925fa3914e
 &scope=write_products,read_orders
-&redirect_uri=http://localhost/Shopify_app/shopify_app.php
+&redirect_uri=http://localhost/Shopify_app/shopifyConnection.php
 */
 
 ?>
