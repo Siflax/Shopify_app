@@ -9,11 +9,23 @@ function deleteProduct($productID){
 }
 
 /**
-* Convert an object to an array
+* get all products - specify in array
 * @param    array  $array	 array of product selection criteria
 * @return   object
 */
 function getProduct($array){
+	global $shopify;
+	$products = $shopify('GET', '/admin/products.json', $array );
+	return $products;
+}
+
+/**
+* Get product by ID
+* @param    integer  $productID	 ID of product
+* @param    array  $array	 array of product selection criteria
+* @return   object
+*/
+function getProductById($productID, $array){
 	global $shopify;
 	$products = $shopify('GET', '/admin/products.json', $array );
 	return $products;
@@ -36,6 +48,16 @@ function createProduct($arguments){
 function updateProduct($productID, $arguments){
 		global $shopify;
 		$shopify('PUT', '/admin/products/' . $productID . '.json', $arguments);
+}
+
+/**
+* Update variant
+* @param    integer $productID	ID of product to be updated
+* @param    array  $argument  array of arguments with information to be updated
+*/
+function updateVariant($variantID, $arguments){
+		global $shopify;
+		$shopify('PUT', '/admin/variants/' . $variantID . '.json', $arguments);
 }
 
 ?>

@@ -7,7 +7,7 @@ include 'includes/mySQLconnect.php';
 
 session_start(); //start a session
 
-// * prepare shopify data
+// Prepare shopify data
 
 	// get shop name
 	$shop = $_SESSION['shop'];
@@ -25,10 +25,28 @@ session_start(); //start a session
 	);
 
 
-// * Handling of unselect feature 
+// Handling of unselect feature 
 if ($_POST['submitUnselect']) { 
 	
+	// delete book from Shopify
+		
+		// get product ID where sku is equal to BookId
+		$query= "SELECT ShopifyBookId FROM SelectedBooks WHERE BookId = '" . $_POST['submitUnselect'] . "'";
+		$call = $db->query($query);
+			
+			// echo if errors
+			if (!$call){
+				echo $db->error . '</br>'. '</br>';
+			}
+		
+		$callArray = $call->fetch_array();	
+		$productId = $callArray["ShopifyBookId"];
+		
+		// delete product with the according productID
+		deleteProduct($productId);
+	
 	// remove book from SelectedBooks
+	
 	$query = "DELETE FROM SelectedBooks WHERE BookId = '" . $_POST['submitUnselect'] . "'";
 	$call = $db->query($query);
 
@@ -36,22 +54,13 @@ if ($_POST['submitUnselect']) {
 		if (!$call){
 			echo $db->error . '</br>'. '</br>';
 		}
-	
-	// delete book from Shopify
-		
-		// get product ID where sku is equal to BookId
-	
-		// delete product with the according productID
-		
-		//deleteProduct();
-	
 }
 
 	
-// * Handling of update price feature
+// Handling of update price feature
 if ($_POST["submitRetailPrice"]) { 
 	
-	// if $_POST detailPris update column in SelectedBooks
+	// update column in SelectedBooks
 	$query = "UPDATE SelectedBooks SET `retailPrice` = '" . $_POST['retailPrice'] . "' WHERE BookId = '" . $_POST["submitRetailPrice"] . "'";
 	$call = $db->query($query);
 
@@ -60,16 +69,46 @@ if ($_POST["submitRetailPrice"]) {
 			echo $db->error . '</br>'. '</br>';
 		}
 	
-	// update product on shopify
+	// update product on Shopify
+	
+		// get product ID where sku is equal to BookId
+		$query= "SELECT ShopifyBookId, Title FROM SelectedBooks WHERE BookId = '" . $_POST['submitRetailPrice'] . "'";
+		$call = $db->query($query);
+		
+			// echo if errors
+			if (!$call){
+				echo $db->error . '</br>'. '</br>';
+			}
+			
+		$callArray = $call->fetch_array();	
+		$productId = $callArray["ShopifyBookId"];
+	
+		// get products variants							***************** summon variants id - write to variant after http://docs.shopify.com/api/product_variant
+		$array = array("fields"=>"variants"); 
+		$productsArray = getProductById($productId, $array);
+		$variantsArray = $productsArray[0]['variants'][0];
+		
+		// put new price into variants array
+		$variantsArray['price'] = $_POST['retailPrice'];
+
+		// insert new variants array in shopify
+		$arguments = array
+		        (
+		            "product"=>array
+		            (
+						"variants"=>$variantsArray
+		            )
+		        );
+				var_dump($arguments);
+		//updateProduct($productId,$arguments);
+
 }
 	
 	
-// * Handling of select book feature 	
+// Handling of select book feature 	
 if ($_POST['submitBook']){
 	
-	// store time into table to use later to get product ID
-	
-	//  insert into selected books
+	// insert book into selected books
 	
 		// get column names from AllPublizonBooks
 		$query="SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'shopify_App' AND TABLE_NAME = 'AllPublizonBooks'";
@@ -83,15 +122,16 @@ if ($_POST['submitBook']){
 		// make column name string
 		$columns = array();
 		while ($row = $call->fetch_array()) {
-			$columns[] = $row[0];
-		
+			$columns[] = $row[0];	
 		}
 		$columns = implode(', ', $columns);
 	
 		// insert book data from AllPublizonBooks into SelectedBooks table
 		$titel =  $_POST['Titel'];
 		$isbn = $_POST['ISBN'];
-		$query = "INSERT INTO `SelectedBooks` (" .$columns . ") SELECT " . $columns . " FROM `AllPublizonBooks` WHERE Title= '".$titel ."' AND Identifier = '" . $isbn . "'";	
+		$query = 	"INSERT INTO `SelectedBooks` (" . $columns . ") 
+					SELECT " . $columns . " FROM `AllPublizonBooks` 
+					WHERE Title= '". $titel ."' AND Identifier = '" . $isbn . "'";	
 		$call = $db->query($query);
 
 			// if errors echo them
@@ -116,7 +156,7 @@ if ($_POST['submitBook']){
 		}
 	
 		// prepare values to be inserted 
-			//prepare images to be inserted
+			//prepare images
 			$images = json_decode($Images, true);
 			$images=$images['Image'][0];
 			$images=array_chunk($images,1);
@@ -124,17 +164,16 @@ if ($_POST['submitBook']){
 			$images['src'] = $images[0];
 			unset($images[0]);
 	
-			//prepare MainDescription to be inserted
+			//prepare MainDescription
 			$MainDescription = addslashes($MainDescription);
 	
-			//create variants array
+			//Prepare variants array 
 			$variants = array();
-			$variants['option1'] =$Title;
-			$price=json_decode($Price, true);
-			$variants['price'] = $price['_'];
+			$variants['option1'] = $Title;
+			$variants['price'] = $retailPrice;
 			$variants['sku'] = $BookId ;
 		
-			// prepare subjects to be inserted
+			// prepare subjects 
 			$subjects = json_decode($Subjects,true);
 					$subjects = $subjects["SimpleSubject"];
 				
@@ -154,7 +193,6 @@ if ($_POST['submitBook']){
 					
 					    return $max_depth;
 					}
-				
 					$arrayDepth = array_depth($subjects);
 					
 					// make data into string			
@@ -171,8 +209,7 @@ if ($_POST['submitBook']){
 					} 
 	
 	
-		// insert data into array
-		
+		// insert data into arguments array
 		$arguments = array
 			        (
 			            "product"=>array
@@ -185,13 +222,29 @@ if ($_POST['submitBook']){
 							"tags"=>$subjectsString
 			            )
 			        );
+					
 		// create new product
 		createProduct($arguments);
 	
-	// get product ID from shopify and store in selected books table
+	// store product ID in selected books table
 	
-}
+		// get data from shopify 
+		$array = array("fields"=>"id, variants"); 
+		$productsArray = getProduct($array);
+		foreach ($productsArray as $productArray){
+			$productId = $productArray['id'];
+			$productSku = $productArray['variants'][0]['sku'];
+			
+			// insert product ID into database
+			$query = "UPDATE SelectedBooks SET `ShopifyBookId` = '" . $productId . "' WHERE BookId = '" . $productSku . "'";							
+			$call = $db->query($query);
 
+				// if errors echo them
+				if (!$call){
+					echo $db->error . '</br>'. '</br>';
+				}
+		}
+}
 
 // import books from selected table to view.
 $query = "SELECT * FROM `SelectedBooks`";
@@ -200,62 +253,7 @@ $call2 = $db->query($query);
 	// if errors echo them
 	if (!$call){
 		echo $db->error . '</br>'. '</br>';
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-// shopify commands
-
-
-
-// * update product
-$productID = 334862555;
-$arguments = array
-        (
-            "product"=>array
-            (
-				"title" => "updateret - Burton Custom Freestlye 151",
-				"body_html" => "Good snowboard!",
-				"vendor"=> "Burton",
-				"product_type"=> "Snowboard",
-				"tags"=> "Barnes & Noble, John's Fav"
-            )
-        );
-
-// updateProduct($productID,$arguments);
-
-// * create new product
-$arguments = array
-	        (
-	            "product"=>array
-	            (
-					"title" => "Burton Custom Freestlye 159",
-					"body_html" => "Good snowboard!",
-					"vendor"=> "Burton",
-					"product_type"=> "Snowboard",
-					"tags"=> "Barnes & Noble, John's Fav"
-	            )
-	        );
-	
-//createProduct($arguments);
-
-
-// * get product 
-$array = array('published_status'=>'published');
-$productArray = getProduct($array);
-//var_dump($productArray[0]['id']);	
-	
-	
-	
-	
-	
+	}	
 ?>
 
 <html>
@@ -266,11 +264,25 @@ $productArray = getProduct($array);
 	
 	<body>
 		
-		<?php
-		$data = array('Titel','ISBN');
-		include 'includes/form.php';
+		<?php $data = array('Titel','ISBN');?>
 		
-		while ($row = $call2->fetch_array()) {?>
+		<div>
+			<form id="book" name="book" method="post" action="">
+				
+				<?php foreach($data as $data) { ?>
+					<label> <?php echo $data; ?>
+						<input type="text" name="<?php echo $data; ?>" id="<?php echo $data; ?>"/>
+					</label>			
+				<?php }?>
+			
+					<label>
+						<input type="submit" name="submitBook" id="submit" value="Submit"/>
+					</label>
+			
+			</form>
+		</div>
+		
+		<?php while ($row = $call2->fetch_array()) {?>
 		
 			<form id="unselect" name="unselect" method="post" action="">		
 					<button type="submitUnselect" name="submitUnselect" value="<?php echo $row['BookId'] ;?>">Fjern</button>
