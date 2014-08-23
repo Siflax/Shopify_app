@@ -2,7 +2,7 @@
 
 require 'vendor/autoload.php';
 use sandeepshetty\shopify_api;
-include 'ShopifyFunctions.php';
+include 'shopifyFunctions.php';
 include 'includes/mySQLconnect.php';
 
 session_start(); //start a session
@@ -46,7 +46,6 @@ if ($_POST['submitUnselect']) {
 		deleteProduct($productId);
 	
 	// remove book from SelectedBooks
-	
 	$query = "DELETE FROM SelectedBooks WHERE BookId = '" . $_POST['submitUnselect'] . "'";
 	$call = $db->query($query);
 
@@ -89,7 +88,7 @@ if ($_POST["submitRetailPrice"]) {
 		$variantsArray = $productsArray['variants'][0];
 		$variantId = $variantsArray['id'];
 				
-		// insert new variants array in shopify
+		// insert new price in variant
 		$arguments = array
 		        (
 		            "variant"=>array
@@ -139,7 +138,7 @@ if ($_POST['submitBook']){
 	// add books to shopify
 	
 		// get book data from Selected Books
-		$query="SELECT * FROM SelectedBooks WHERE Title= '".$titel ."' AND Identifier = '" . $isbn . "'";
+		$query="SELECT * FROM SelectedBooks WHERE Title= '". $titel ."' AND Identifier = '" . $isbn . "'";
 		$call = $db->query($query);
 	
 			// echo if errors
@@ -161,7 +160,7 @@ if ($_POST['submitBook']){
 			$images['src'] = $images[0];
 			unset($images[0]);
 	
-			//prepare MainDescription
+			//prepare main description
 			$MainDescription = addslashes($MainDescription);
 	
 			//Prepare variants array 
@@ -205,7 +204,6 @@ if ($_POST['submitBook']){
 						$subjectsString = implode($subjectsArray, ", ");
 					} 
 	
-	
 		// insert data into arguments array
 		$arguments = array
 			        (
@@ -228,6 +226,7 @@ if ($_POST['submitBook']){
 		// get data from shopify 
 		$array = array("fields"=>"id, variants"); 
 		$productsArray = getProduct($array);
+		
 		foreach ($productsArray as $productArray){
 			$productId = $productArray['id'];
 			$productSku = $productArray['variants'][0]['sku'];
@@ -245,12 +244,15 @@ if ($_POST['submitBook']){
 
 // import books from selected table to view.
 $query = "SELECT * FROM `SelectedBooks`";
-$call2 = $db->query($query);
+$selectedBooksObject = $db->query($query);
 
 	// if errors echo them
-	if (!$call){
+	if (!$selectedBooksObject){
 		echo $db->error . '</br>'. '</br>';
 	}	
+	
+// decode price object
+$wholesalePrice = json_decode($row["Price"]);
 ?>
 
 <html>
@@ -261,16 +263,16 @@ $call2 = $db->query($query);
 	
 	<body>
 		
-		<?php $data = array('Titel','ISBN');?>
-		
 		<div>
-			<form id="book" name="book" method="post" action="">
+			<form id="book" name="book" method="post" action="">			
 				
-				<?php foreach($data as $data) { ?>
-					<label> <?php echo $data; ?>
-						<input type="text" name="<?php echo $data; ?>" id="<?php echo $data; ?>"/>
+					<label> Titel
+						<input type="text" name="Titel" id="Titel"/>
 					</label>			
-				<?php }?>
+				
+					<label> ISBN
+						<input type="text" name="ISBN" id="ISBN"/>
+					</label>
 			
 					<label>
 						<input type="submit" name="submitBook" id="submit" value="Submit"/>
@@ -279,16 +281,15 @@ $call2 = $db->query($query);
 			</form>
 		</div>
 		
-		<?php while ($row = $call2->fetch_array()) {?>
+		<?php while ($row = $selectedBooksObject->fetch_array()) {?>
 		
 			<form id="unselect" name="unselect" method="post" action="">		
-					<button type="submitUnselect" name="submitUnselect" value="<?php echo $row['BookId'] ;?>">Fjern</button>
+					<button type="submitUnselect" name="submitUnselect" value="<?php echo $row['BookId'] ;?>">Remove</button>
 			</form>	
 		
 			<?php
-			$test = json_decode($row["Price"]);
-		    echo $row["Title"]. "&nbsp;&nbsp;&nbsp;&nbsp af " . $row["Authors"];
-			echo " &nbsp;&nbsp;&nbsp;&nbsp;" . "engros pris: " . $test->_ . " " . $test->CurrencyCode;
+			echo $row["Title"]. "&nbsp;&nbsp;&nbsp;&nbsp af " . $row["Authors"];
+			echo " &nbsp;&nbsp;&nbsp;&nbsp;" . "engros pris: " . $wholesalePrice->_ . " " . $wholesalePrice->CurrencyCode;
 			echo " &nbsp;&nbsp;&nbsp;&nbsp;" . "detail pris: ";		
 			?>
 		
@@ -311,6 +312,3 @@ $call2 = $db->query($query);
 	</body>
 	
 </html>	
-
-
-	

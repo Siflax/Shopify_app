@@ -9,10 +9,10 @@ $time = gmdate('Y-m-d\TH:i:s');
 $query = "INSERT INTO SoapCalls (`soapCall`, `dateTime`) VALUES ('Import all books','" . $time . "')";
 $call = $db->query($query);	
 
-// if errors echo them
-if (!$call){
-	echo $db->error . '</br>'. '</br>';
-}
+	// if errors echo them
+	if (!$call){
+		echo $db->error . '</br>'. '</br>';
+	}
 
 // get all book IDs
 $AllBookIDs = ListAllBookIds(licenseKey);
@@ -20,10 +20,9 @@ $AllBookIDs = ListAllBookIds(licenseKey);
 // count book IDs
 $countBookIDs = count($AllBookIDs["ListAllBookIdsResult"]["BookId"]);
 
-// create empty book ID array
-$BookIdArray = array();
 
 // load selection of book ids into array
+$BookIdArray = array();
 for ($i=0; $i<10; $i++){
 	$BookIdArray[] = $AllBookIDs["ListAllBookIdsResult"]["BookId"][$i]["_"];
 }
