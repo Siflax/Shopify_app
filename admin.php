@@ -251,8 +251,7 @@ $selectedBooksObject = $db->query($query);
 		echo $db->error . '</br>'. '</br>';
 	}	
 	
-// decode price object
-$wholesalePrice = json_decode($row["Price"]);
+
 ?>
 
 <html>
@@ -288,6 +287,7 @@ $wholesalePrice = json_decode($row["Price"]);
 			</form>	
 		
 			<?php
+			$wholesalePrice = json_decode($row["Price"]);
 			echo $row["Title"]. "&nbsp;&nbsp;&nbsp;&nbsp af " . $row["Authors"];
 			echo " &nbsp;&nbsp;&nbsp;&nbsp;" . "engros pris: " . $wholesalePrice->_ . " " . $wholesalePrice->CurrencyCode;
 			echo " &nbsp;&nbsp;&nbsp;&nbsp;" . "detail pris: ";		
