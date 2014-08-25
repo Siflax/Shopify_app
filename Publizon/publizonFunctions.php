@@ -48,7 +48,7 @@ $objSoapClient = new SoapClient($url,$config);
 				   	// if the value is an array: JSON_encode (escapes as well)
 				   	if (is_array($value)){
 		
-				   		// JSON encode array - single and double quotes are formatted (remember to check if output formatting is automatic)
+				   		// JSON encode array - single and double quotes are formatted 
 				   		$value = JSON_encode($value, JSON_HEX_APOS, JSON_HEX_QUOT);
 				
 				   	} else { // escape strings
@@ -126,7 +126,7 @@ $objSoapClient = new SoapClient($url,$config);
 	* insert data from an array with data for a single book into table where column is as specified
 	* @param    array  $bookArray 	array with data for single book
 	* @param    string  $tableName	 table to insert into
-	* @param    string  $whereColumn	 column to to identify book - has to be BookId - otherwise change function
+	* @param    string  $whereColumn	 column to to identify book
 	*/
 		function BookToDBWhere($bookArray, $tableName, $whereColumn) {
 
@@ -144,7 +144,7 @@ $objSoapClient = new SoapClient($url,$config);
 			   	// if the value is an array: JSON_encode (escapes as well)
 			   	if (is_array($value)){
 	
-			   		// JSON encode array - single and double quotes are formatted (remember to check if output formatting is automatic)
+			   		// JSON encode array - single and double quotes are formatted 
 			   		$value = JSON_encode($value, JSON_HEX_APOS, JSON_HEX_QUOT);
 			
 			   	} else { // escape strings
