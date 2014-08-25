@@ -5,7 +5,9 @@ include '../includes/mySQLconnect.php';
 include '../includes/config.php';
 
 // get afterUTC from database
-$query = "SELECT dateTime FROM SoapCalls ORDER BY ID DESC LIMIT 1";
+$query = 	"SELECT dateTime 
+			FROM SoapCalls 
+			ORDER BY ID DESC LIMIT 1";
 $call = $db->query($query);	
 
 	// if errors echo them
@@ -52,7 +54,8 @@ foreach ($modifiedBooks["ListModifiedBooksResult"]['RemovedBooks']["BookId"] as 
 	
 	// Delete from SelectedBooks table
 	$tableName = "SelecetedBooks";
-	$query= "DELETE FROM " . $tableName . "	WHERE bookId='" . $bookID["_"] . "'";
+	$query= "DELETE FROM " . $tableName . "	
+			WHERE bookId='" . $bookID["_"] . "'";
 	$call = $db->query($query);	
 	
 		// if errors echo them
@@ -63,7 +66,8 @@ foreach ($modifiedBooks["ListModifiedBooksResult"]['RemovedBooks']["BookId"] as 
 
 // insert name, date and time of the soap call in database
 $time = gmdate('Y-m-d\TH:i:s');
-$query = "INSERT INTO SoapCalls (`soapCall`, `dateTime`) VALUES ('Update books','" . $time . "')";
+$query = 	"INSERT INTO SoapCalls (`soapCall`, `dateTime`) 
+			VALUES ('Update books','" . $time . "')";
 $call = $db->query($query);	
 
 	// if errors echo them

@@ -6,7 +6,8 @@ include '../includes/config.php';
 
 // insert name, date and time of the soap call in database
 $time = gmdate('Y-m-d\TH:i:s');
-$query = "INSERT INTO SoapCalls (`soapCall`, `dateTime`) VALUES ('Import all books','" . $time . "')";
+$query = "INSERT INTO SoapCalls (`soapCall`, `dateTime`)
+		 VALUES ('Import all books','" . $time . "')";
 $call = $db->query($query);	
 
 	// if errors echo them

@@ -63,13 +63,17 @@ $objSoapClient = new SoapClient($url,$config);
 
 			   	// if key is not a column in databse insert it
 				   	// if key is not yet a column in the database the following will return 0
-				   	$query =  "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '" . $tableName ."' AND table_schema = 'shopify_app' AND column_name =" . "'" . $key  . "'";
+				   	$query =  "SELECT * FROM INFORMATION_SCHEMA.COLUMNS
+							 WHERE table_name = '" . $tableName ."' 
+							AND table_schema = 'shopify_app' 
+							AND column_name =" . "'" . $key  . "'";
 				   	$columnCheck= $db->query($query);
 				   	$columnCheckNumRows = $columnCheck->num_rows;
 
 				   	// if the key is not in database insert it as column.
 				   	if ($columnCheckNumRows == 0) {
-				   		$query = "ALTER TABLE " . $tableName . " ADD " . $key . " VARCHAR(10000) default NULL after " . $lastKey;
+				   		$query = "ALTER TABLE " . $tableName . " 
+								ADD " . $key . " VARCHAR(10000) default NULL after " . $lastKey;
 				   		$db->query($query);
 				   	}
 					
@@ -111,7 +115,9 @@ $objSoapClient = new SoapClient($url,$config);
 			   }
 
 		   // insert into database
-		   $query = "INSERT INTO " . $tableName . " (" . $keysString .  ") VALUES (" . $valuesString .") ON DUPLICATE KEY UPDATE " . $keyValueString ;
+		   $query = "INSERT INTO " . $tableName . " (" . $keysString .  ") 
+			   		VALUES (" . $valuesString .") 
+		   			ON DUPLICATE KEY UPDATE " . $keyValueString ;
 		   $call = $db->query($query);	
 
 			   // if errors echo them
@@ -162,13 +168,17 @@ $objSoapClient = new SoapClient($url,$config);
 
 			   	// * if key is not a column in databse insert it
 			   	// if key is not yet a column in the database the following will return 0
-			   	$query =  "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '" . $tableName ."' AND table_schema = 'shopify_app' AND column_name =" . "'" . $key  . "'";
+			   	$query =  	"SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+							WHERE table_name = '" . $tableName ."' 
+							AND table_schema = 'shopify_app' 
+							AND column_name =" . "'" . $key  . "'";
 			   	$columnCheck= $db->query($query);
 			   	$columnCheckNumRows = $columnCheck->num_rows;
 
 			   	// if the key is not in database insert it as column.
 			   	if ($columnCheckNumRows == 0) {
-			   		$query = "ALTER TABLE " . $tableName . " ADD " . $key . " VARCHAR(10000) default NULL after " . $lastKey;
+			   		$query = 	"ALTER TABLE " . $tableName . " 
+								ADD " . $key . " VARCHAR(10000) default NULL after " . $lastKey;
 			   		$db->query($query);
 			   	}
 			   	// save key as lastKey so next iteration can use it
@@ -209,7 +219,9 @@ $objSoapClient = new SoapClient($url,$config);
 		   }
 
 		   // insert into database
-		   $query = "UPDATE " . $tableName . " SET " . $keyValueString .  " WHERE " . $whereColumn ." = " . $BookId ;
+		   $query = "UPDATE " . $tableName . " 
+			   		SET " . $keyValueString .  " 
+		   			WHERE " . $whereColumn ." = " . $BookId ;
 		   $call = $db->query($query);	
 
 		   // if errors echo them

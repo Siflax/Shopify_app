@@ -13,10 +13,12 @@ session_start(); //start a session
 	$shop = $_SESSION['shop'];
 
 	// get app and user data from databases
-	$select_settings = $db->query("SELECT * FROM tbl_appsettings WHERE id = 1");
+	$select_settings = $db->query(	"SELECT * FROM tbl_appsettings
+			 						WHERE id = 1");
 	$app_settings = $select_settings->fetch_object();
 
-	$select_userSettings = $db->query("SELECT * FROM tbl_usersettings WHERE store_name = '$shop'");
+	$select_userSettings = $db->query(	"SELECT * FROM tbl_usersettings 
+										WHERE store_name = '$shop'");
 	$shop_data = $select_userSettings->fetch_object();
 
 	//connect to shopify client
@@ -31,7 +33,8 @@ if ($_POST['submitUnselect']) {
 	// delete book from Shopify
 		
 		// get product ID where sku is equal to BookId
-		$query= "SELECT ShopifyBookId FROM SelectedBooks WHERE BookId = '" . $_POST['submitUnselect'] . "'";
+		$query= "SELECT ShopifyBookId FROM SelectedBooks 
+				WHERE BookId = '" . $_POST['submitUnselect'] . "'";
 		$call = $db->query($query);
 			
 			// echo if errors
@@ -46,7 +49,8 @@ if ($_POST['submitUnselect']) {
 		deleteProduct($productId);
 	
 	// remove book from SelectedBooks
-	$query = "DELETE FROM SelectedBooks WHERE BookId = '" . $_POST['submitUnselect'] . "'";
+	$query = 	"DELETE FROM SelectedBooks 
+				WHERE BookId = '" . $_POST['submitUnselect'] . "'";
 	$call = $db->query($query);
 
 		// if errors echo them
@@ -60,7 +64,9 @@ if ($_POST['submitUnselect']) {
 if ($_POST["submitRetailPrice"]) { 
 	
 	// update column in SelectedBooks
-	$query = "UPDATE SelectedBooks SET `retailPrice` = '" . $_POST['retailPrice'] . "' WHERE BookId = '" . $_POST["submitRetailPrice"] . "'";
+	$query = 	"UPDATE SelectedBooks 
+				SET `retailPrice` = '" . $_POST['retailPrice'] . "' 
+				WHERE BookId = '" . $_POST["submitRetailPrice"] . "'";
 	$call = $db->query($query);
 
 		// if errors echo them
@@ -71,7 +77,8 @@ if ($_POST["submitRetailPrice"]) {
 	// update product on Shopify
 	
 		// get product ID where sku is equal to BookId
-		$query= "SELECT ShopifyBookId, Title FROM SelectedBooks WHERE BookId = '" . $_POST['submitRetailPrice'] . "'";
+		$query= "SELECT ShopifyBookId, Title FROM SelectedBooks 
+				WHERE BookId = '" . $_POST['submitRetailPrice'] . "'";
 		$call = $db->query($query);
 		
 			// echo if errors
@@ -107,7 +114,8 @@ if ($_POST['submitBook']){
 	// insert book into selected books
 	
 		// get column names from AllPublizonBooks
-		$query="SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'shopify_App' AND TABLE_NAME = 'AllPublizonBooks'";
+		$query="SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS 
+				WHERE TABLE_SCHEMA = 'shopify_App' AND TABLE_NAME = 'AllPublizonBooks'";
 		$call = $db->query($query);
 
 			// if errors echo them
@@ -138,7 +146,8 @@ if ($_POST['submitBook']){
 	// add books to shopify
 	
 		// get book data from Selected Books
-		$query="SELECT * FROM SelectedBooks WHERE Title= '". $titel ."' AND Identifier = '" . $isbn . "'";
+		$query="SELECT * FROM SelectedBooks 
+				WHERE Title= '". $titel ."' AND Identifier = '" . $isbn . "'";
 		$call = $db->query($query);
 	
 			// echo if errors
@@ -232,7 +241,9 @@ if ($_POST['submitBook']){
 			$productSku = $productArray['variants'][0]['sku'];
 			
 			// insert product ID into database
-			$query = "UPDATE SelectedBooks SET `ShopifyBookId` = '" . $productId . "' WHERE BookId = '" . $productSku . "'";							
+			$query = 	"UPDATE SelectedBooks 
+						SET `ShopifyBookId` = '" . $productId . "' 
+						WHERE BookId = '" . $productSku . "'";							
 			$call = $db->query($query);
 
 				// if errors echo them
