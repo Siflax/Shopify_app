@@ -218,7 +218,7 @@ if ($_POST['submitBook']){
 			        (
 			            "product"=>array
 			            (
-							"title" => $Title,
+							"title" => 'æøå',
 							"body_html" => $MainDescription,
 							"product_type"=> $BookType,
 							"images"=>$images,

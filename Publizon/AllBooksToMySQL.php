@@ -21,7 +21,7 @@ $countBookIDs = count($AllBookIDs["ListAllBookIdsResult"]["BookId"]);
 
 // load selection of book ids into array
 $BookIdArray = array();
-for ($i=0; $i<20; $i++){
+for ($i=0; $i<15; $i++){
 	$BookIdArray[] = $AllBookIDs["ListAllBookIdsResult"]["BookId"][$i]["_"];
 }
 
