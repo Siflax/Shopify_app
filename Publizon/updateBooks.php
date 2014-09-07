@@ -53,7 +53,7 @@ foreach ($modifiedBooks["ListModifiedBooksResult"]['RemovedBooks']["BookId"] as 
 		}
 	
 	// Delete from SelectedBooks table
-	$tableName = "SelecetedBooks";
+	$tableName = "SelectedBooks";
 	$query= "DELETE FROM " . $tableName . "	
 			WHERE bookId='" . $bookID["_"] . "'";
 	$call = $db->query($query);	
@@ -62,6 +62,24 @@ foreach ($modifiedBooks["ListModifiedBooksResult"]['RemovedBooks']["BookId"] as 
 		if (!$call){
 			echo $db->error . '</br>'. '</br>';
 		}
+		
+	//	Delete from shopify
+		// get product ID where sku is equal to BookId
+		$query= "SELECT ShopifyBookId FROM SelectedBooks 
+				WHERE BookId = '" . $bookID["_"] . "'";
+		$call = $db->query($query);
+		
+			// echo if errors
+			if (!$call){
+				echo $db->error . '</br>'. '</br>';
+			}
+	
+		$callArray = $call->fetch_array();	
+		$productId = $callArray["ShopifyBookId"];
+	
+		// delete product with the according productID
+		deleteProduct($productId);
+	 
 }
 
 // insert name, date and time of the soap call in database
