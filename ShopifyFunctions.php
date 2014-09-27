@@ -1,4 +1,5 @@
 <?php
+
 /**
 * delete a product with given product ID
 * @param    integer  $productID	 ID of product
