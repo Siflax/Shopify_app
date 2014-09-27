@@ -73,7 +73,7 @@ if ($_POST["submitRetailPrice"]) {
 		if (!$call){
 			echo $db->error . '</br>'. '</br>';
 		}
-	
+		
 	// update product on Shopify
 	
 		// get product ID where sku is equal to BookId
