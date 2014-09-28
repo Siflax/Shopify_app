@@ -68,13 +68,28 @@ if(!empty($_GET['shop']) && !empty($_GET['code'])){
   header('Location: http://localhost/Shopify_app/admin.php');
 }
 
-/* install app -> guide: http://docs.shopify.com/api/tutorials/oauth
+/* 
+for testApp
+install app -> guide: http://docs.shopify.com/api/tutorials/oauth
 Url:
 https://shopapptest.myshopify.com/admin/oauth/authorize
 ?client_id=244870c6a5a2e27f58f578925fa3914e
 &scope=write_products,read_orders
 &redirect_uri=http://localhost/Shopify_app/shopifyConnection.php
 */
+
+/* 
+for testAppOnline
+install app -> guide: http://docs.shopify.com/api/tutorials/oauth
+Url:
+https://shopapptest.myshopify.com/admin/oauth/authorize
+?client_id=addd6d049eafa5dc9598a97a137cf4eb
+&scope=write_products,read_orders
+&redirect_uri=http://surftravel.dk/Shopify_app/ShopifyConnection.php
+*/
+
+
+
 
 ?>
 
