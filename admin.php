@@ -4,6 +4,7 @@ require 'vendor/autoload.php';
 use sandeepshetty\shopify_api;
 include 'shopifyFunctions.php';
 include 'includes/mySQLconnect.php';
+include 'includes/config.php';
 
 session_start(); //start a session
 
@@ -115,7 +116,7 @@ if ($_POST['submitBook']){
 	
 		// get column names from AllPublizonBooks
 		$query="SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS 
-				WHERE TABLE_SCHEMA = 'shopify_App' AND TABLE_NAME = 'AllPublizonBooks'";
+				WHERE TABLE_SCHEMA = '" . DB_NAME . "' AND TABLE_NAME = 'AllPublizonBooks'";
 		$call = $db->query($query);
 
 			// if errors echo them
