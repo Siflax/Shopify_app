@@ -19,7 +19,7 @@ if(!empty($_GET['shop']) && empty($_GET['code'])){ //check if the shop name is p
       if(shopify_api\is_valid_request($_GET, $app_settings->shared_secret)){ //check if its a valid request from Shopify        
           $_SESSION['shopify_signature'] = $_GET['signature'];
           $_SESSION['shop'] = $shop;
-          header('Location: http://localhost/Shopify_app/admin.php'); //redirect to the admin page
+          header('Location: http://' . $_SERVER[HTTP_HOST] . '/Shopify_app/admin.php'); //redirect to the admin page
       }
       
   }else{     
@@ -65,7 +65,7 @@ if(!empty($_GET['shop']) && !empty($_GET['code'])){
   $_SESSION['shopify_signature'] = $_GET['signature'];
   $_SESSION['shop'] = $shop;
 
-  header('Location: http://localhost/Shopify_app/admin.php');
+  header('Location: http://' . $_SERVER[HTTP_HOST] . '/Shopify_app/admin.php');
 }
 
 /* 
@@ -85,7 +85,7 @@ Url:
 https://shopapptest.myshopify.com/admin/oauth/authorize
 ?client_id=addd6d049eafa5dc9598a97a137cf4eb
 &scope=write_products,read_orders
-&redirect_uri=http://surftravel.dk/Shopify_app/ShopifyConnection.php
+&redirect_uri=http://surftravel.dk/Shopify_app/shopifyConnection.php
 */
 
 
