@@ -270,6 +270,10 @@ $selectedBooksObject = $db->query($query);
 
 	<head>
 		<meta charset="utf-8"> 
+		<link rel="stylesheet" type="text/css" href="CSS/stylesheet.css">
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript"></script>
+		<script src="js/jqueryscript.js"></script>
 	</head>
 	
 	<body>
@@ -294,28 +298,32 @@ $selectedBooksObject = $db->query($query);
 		
 		<?php while ($row = $selectedBooksObject->fetch_array()) {?>
 		
-			<form id="unselect" name="unselect" method="post" action="">		
-					<button type="submitUnselect" name="submitUnselect" value="<?php echo $row['BookId'] ;?>">Remove</button>
-			</form>	
+			<div class = 'task'>
 		
-			<?php
-			$wholesalePrice = json_decode($row["Price"]);
-			echo $row["Title"]. "&nbsp;&nbsp;&nbsp;&nbsp af " . $row["Authors"];
-			echo " &nbsp;&nbsp;&nbsp;&nbsp;" . "engros pris: " . $wholesalePrice->_ . " " . $wholesalePrice->CurrencyCode;
-			echo " &nbsp;&nbsp;&nbsp;&nbsp;" . "detail pris: ";		
-			?>
+				<form id="unselect" name="unselect" method="post" action="">		
+						<button type="submitUnselect" name="submitUnselect" value="<?php echo $row['BookId'] ;?>">Remove</button>
+				</form>	
 		
-			<form id="retailPrice" name="retailPrice" method="post" action="">
+				<?php
+				$wholesalePrice = json_decode($row["Price"]);
+				echo $row["Title"]. "&nbsp;&nbsp;&nbsp;&nbsp af " . $row["Authors"];
+				echo " &nbsp;&nbsp;&nbsp;&nbsp;" . "engros pris: " . $wholesalePrice->_ . " " . $wholesalePrice->CurrencyCode;
+				echo " &nbsp;&nbsp;&nbsp;&nbsp;" . "detail pris: ";		
+				?>
+		
+				<form id="retailPrice" name="retailPrice" method="post" action="">
 			
-					<label> 
-						<input type="text" name="retailPrice" id="retailPrice" value = "<?php echo $row["retailPrice"]; ?>"/>
-					</label>			
+						<label> 
+							<input type="text" name="retailPrice" id="retailPrice" value = "<?php echo $row["retailPrice"]; ?>"/>
+						</label>			
 		
-					<label>
+						<label>
 					
-						<button type="submitRetailPrice" name="submitRetailPrice" value="<?php echo $row["BookId"]; ?>" >Submit</button>
-					</label>	
-			</form>
+							<button type="submitRetailPrice" name="submitRetailPrice" value="<?php echo $row["BookId"]; ?>" >Submit</button>
+						</label>	
+				</form>
+			
+			<div>
 		
 			<?php echo '</br>';
 		

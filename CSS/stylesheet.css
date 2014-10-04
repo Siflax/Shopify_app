@@ -1,0 +1,16 @@
+* 			{font-family: courier;
+			}
+body 		{background-color: #FCFCFC;
+	 		}
+.task 		{border-style: solid;
+		 	border-width: thin;
+			border-radius:8px;
+		 	border-color: #C0C0C0; 
+		 	margin-bottom: 10px; 
+		 	padding: 0px 0px 0px 10px;
+		 	width:900px;
+	 	 	background-color:white;
+			text-align: left		
+			}
+
+
