@@ -323,11 +323,9 @@ $selectedBooksObject = $db->query($query);
 						</label>	
 				</form>
 			
-			<div>
-		
-			<?php echo '</br>';
-		
-		}?>
+			</div>
+			
+		<?php } ?>
 
 	</body>
 	
