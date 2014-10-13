@@ -215,9 +215,9 @@ if ($_POST['submitBook']){
 						foreach ($subjects as $subject) {
 
 							// correct encoding
-							$subject = correctEncoding($subjects['Description']);
+							$subject = correctEncoding($subject['Description']);
 							// group tags
-							groupTag($subject);
+							$subject = groupTag($subject);
 							// insert into array 
 							$subjectsArray[] = $subject;
 						}

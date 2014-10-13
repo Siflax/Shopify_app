@@ -61,13 +61,6 @@ function updateVariant($variantID, $arguments){
 		$shopify('PUT', '/admin/variants/' . $variantID . '.json', $arguments);
 }
 
-// tags
-
-/**
-* correct encoding issues
-* @param    string  $subjectsString		String of subjects to be corrected
-* @return   string  $subjectsString  	Corrected string of subjects
-*/
 
 /**
 * tag grouper
@@ -99,8 +92,6 @@ function groupTag($subject){
 		"Læsealder fra ca. 15 år" => "15 år",
 	
 	);
-	
-	//correctEncoding($subject);
 
 	//if subject is one of the following
 	foreach ($rules as $key => $value){
