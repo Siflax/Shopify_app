@@ -61,4 +61,83 @@ function updateVariant($variantID, $arguments){
 		$shopify('PUT', '/admin/variants/' . $variantID . '.json', $arguments);
 }
 
+// tags
+
+/**
+* correct encoding issues
+* @param    string  $subjectsString		String of subjects to be corrected
+* @return   string  $subjectsString  	Corrected string of subjects
+*/
+
+/**
+* tag grouper
+* @param    string  $subject			String of a subject
+* @return   string  $subject		 	return correct tag
+*/
+
+function groupTag($subject){
+	$rules = array(
+		
+		"Skønlitterære emner" => "Skønlitteratur",
+		"Skønlitteratur (børn og unge)" => "Skønlitteratur",
+		
+		"Læsealder fra ca. 0 år" => "0 år",
+		"Læsealder fra ca. 1 år" => "1 år",
+		"Læsealder fra ca. 2 år" => "2 år",
+		"Læsealder fra ca. 3 år" => "3 år",
+		"Læsealder fra ca. 4 år" => "4 år",
+		"Læsealder fra ca. 5 år" => "5 år",
+		"Læsealder fra ca. 6 år" => "6 år",
+		"Læsealder fra ca. 7 år" => "7 år",
+		"Læsealder fra ca. 8 år" => "8 år",
+		"Læsealder fra ca. 9 år" => "9 år",
+		"Læsealder fra ca. 10 år" => "10 år",
+		"Læsealder fra ca. 11 år" => "11 år",
+		"Læsealder fra ca. 12 år" => "12 år",
+		"Læsealder fra ca. 13 år" => "13 år",
+		"Læsealder fra ca. 14 år" => "14 år",
+		"Læsealder fra ca. 15 år" => "15 år",
+	
+	);
+	
+	//correctEncoding($subject);
+
+	//if subject is one of the following
+	foreach ($rules as $key => $value){
+
+		if ($subject == $key){
+
+			$subject = $value;
+
+		}
+	}	
+	
+	return $subject;
+}
+
+/**
+* correct encoding
+* @param    string  $subject			String of a subject
+* @return   string  $subject		 	return corrected string
+*/
+
+function correctEncoding($subject){
+	$rules = array(
+		
+		"u00f8" => "ø",
+		"u00e6" => "æ",
+		"u00e5" => "å",
+	
+	);
+	
+	foreach ($rules as $key => $value){
+
+		$subject = str_replace($key, $value, $subject);
+
+	}	
+	
+	return $subject;
+}
+
+
 ?>

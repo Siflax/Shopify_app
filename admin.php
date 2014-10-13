@@ -203,13 +203,23 @@ if ($_POST['submitBook']){
 					
 					// make data into string			
 					if ($arrayDepth==1){
-						$subjectsString = $subjects['Description'];
+						// correct encoding
+						$subject = correctEncoding($subjects['Description']);
+						// group tag
+						$subject = groupTag($subject);
+						$subjectsString = $subject;
 					}
 				
 					if ($arrayDepth==2) {
 						$subjectsArray = array();
 						foreach ($subjects as $subject) {
-							$subjectsArray[] = $subject['Description'];
+
+							// correct encoding
+							$subject = correctEncoding($subjects['Description']);
+							// group tags
+							groupTag($subject);
+							// insert into array 
+							$subjectsArray[] = $subject;
 						}
 						$subjectsString = implode($subjectsArray, ", ");
 					} 
