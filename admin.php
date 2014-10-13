@@ -64,9 +64,27 @@ if ($_POST['submitUnselect']) {
 // Handling of update price feature
 if ($_POST["submitRetailPrice"]) { 
 	
+	// calculate margin
+		// get wholesale price
+		$query= "SELECT Price FROM SelectedBooks 
+				WHERE BookId = '" . $_POST['submitRetailPrice'] . "'";
+		$call = $db->query($query);
+		
+			// echo if errors
+			if (!$call){
+				echo $db->error . '</br>'. '</br>';
+			}
+
+		$callArray = $call->fetch_array();	
+		$wholesalePrice = json_decode($callArray["Price"]);
+		$wholesalePrice = $wholesalePrice->_;
+
+		// calculate margin
+		$calcMargin = $_POST['retailPrice'] / $wholesalePrice;
+
 	// update column in SelectedBooks
 	$query = 	"UPDATE SelectedBooks 
-				SET `retailPrice` = '" . $_POST['retailPrice'] . "' 
+				SET `retailPrice` = '" . $_POST['retailPrice'] . "' , `margin` = '" . $calcMargin . "' 
 				WHERE BookId = '" . $_POST["submitRetailPrice"] . "'";
 	$call = $db->query($query);
 
@@ -143,6 +161,49 @@ if ($_POST['submitBook']){
 			if (!$call){
 				echo $db->error . '</br>'. '</br>';
 			}
+
+
+		// insert standard margin and calculated standard price into selected books table
+			// get standard margin from database
+			$query = "SELECT generalGrossMargin FROM `BusinessSettings`";
+			$standardMargin = $db->query($query);
+
+				// if errors echo them
+				if (!$selectedBooksObject){
+					echo $db->error . '</br>'. '</br>';
+				}	
+
+			$standardMargin = $standardMargin->fetch_array();
+			$standardMargin = $standardMargin["generalGrossMargin"];
+
+			// get wholesale price from database 
+			$query="SELECT Price FROM SelectedBooks WHERE Title= '". $titel ."' AND Identifier = '" . $isbn . "'";
+			$call = $db->query($query);
+
+				// echo if errors
+				if (!$call){
+					echo $db->error . '</br>'. '</br>';
+				}
+
+			$wholesalePrice = $call->fetch_array();
+			$wholesalePrice = json_decode($wholesalePrice["Price"]);
+			$wholesalePrice = $wholesalePrice->_;
+			
+			// calculate standard price
+			$standardPrice = $wholesalePrice * $standardMargin ;
+
+			//insert into selected books
+			$query = 	"UPDATE `SelectedBooks` 
+						SET margin = '". $standardMargin ."' , retailPrice = '". $standardPrice ."'
+						WHERE Title= '". $titel ."' AND Identifier = '" . $isbn . "' ";
+
+			$call = $db->query($query);
+
+				// if errors echo them
+				if (!$call){
+					echo $db->error . '</br>'. '</br>';
+				}
+
 	
 	// add books to shopify
 	
@@ -264,6 +325,23 @@ if ($_POST['submitBook']){
 		}
 }
 
+// handling of submit gross margin feature
+
+// Handling of update margin feature
+if ($_POST["submitStandardMargin"]) { 
+	
+	// update column in SelectedBooks
+	$query = "UPDATE BusinessSettings SET `generalGrossMargin` = '" . $_POST['standardMargin'] . "'";
+	$call = $db->query($query);
+
+		// if errors echo them
+		if (!$call){
+			echo $db->error . '</br>'. '</br>';
+		}
+	
+}
+
+
 // import books from selected table to view.
 $query = "SELECT * FROM `SelectedBooks`";
 $selectedBooksObject = $db->query($query);
@@ -272,6 +350,19 @@ $selectedBooksObject = $db->query($query);
 	if (!$selectedBooksObject){
 		echo $db->error . '</br>'. '</br>';
 	}	
+
+// import margin to view
+
+$query = "SELECT generalGrossMargin FROM `BusinessSettings`";
+$standardMargin = $db->query($query);
+
+	// if errors echo them
+	if (!$selectedBooksObject){
+		echo $db->error . '</br>'. '</br>';
+	}	
+
+$standardMargin = $standardMargin->fetch_array();
+$standardMargin = $standardMargin["generalGrossMargin"];
 	
 
 ?>
@@ -304,6 +395,19 @@ $selectedBooksObject = $db->query($query);
 					</label>
 			
 			</form>
+
+			<form id="standardMargin" name="standardMargin" method="post" action="">			
+				
+					<label> Standard margin
+						<input type="text" name="standardMargin" id="standardMargin" value= " <?php echo $standardMargin; ?> "/>
+					</label>
+			
+					<label>
+						<input type="submit" name="submitStandardMargin" id="submit" value="Submit"/>
+					</label>
+			
+			</form>
+
 		</div>
 		
 		<?php while ($row = $selectedBooksObject->fetch_array()) {?>
@@ -317,20 +421,31 @@ $selectedBooksObject = $db->query($query);
 				<?php
 				$wholesalePrice = json_decode($row["Price"]);
 				echo $row["Title"]. "&nbsp;&nbsp;&nbsp;&nbsp af " . $row["Authors"];
-				echo " &nbsp;&nbsp;&nbsp;&nbsp;" . "engros pris: " . $wholesalePrice->_ . " " . $wholesalePrice->CurrencyCode;
-				echo " &nbsp;&nbsp;&nbsp;&nbsp;" . "detail pris: ";		
+				echo " &nbsp;&nbsp;&nbsp;&nbsp;" . "engros pris: " . $wholesalePrice->_ . " " . $wholesalePrice->CurrencyCode;	
 				?>
-		
+
+				<form id="margin" name="margin" method="post" action="">
+			
+					<label> margin:
+						<input type="text" name="margin" id="margin" value = "<?php echo $row['margin']; ?>"/>
+					</label>			
+
+					<label>
+						<button type="submitMargin" name="submitMargin" value="<?php echo $row["BookId"]; ?>" >Submit</button>
+					</label>	
+
+				</form>	
+
 				<form id="retailPrice" name="retailPrice" method="post" action="">
 			
-						<label> 
-							<input type="text" name="retailPrice" id="retailPrice" value = "<?php echo $row["retailPrice"]; ?>"/>
-						</label>			
-		
-						<label>
-					
-							<button type="submitRetailPrice" name="submitRetailPrice" value="<?php echo $row["BookId"]; ?>" >Submit</button>
-						</label>	
+					<label> detail pris:
+						<input type="text" name="retailPrice" id="retailPrice" value = "<?php echo $row["retailPrice"]; ?>"/>
+					</label>			
+	
+					<label>
+						<button type="submitRetailPrice" name="submitRetailPrice" value="<?php echo $row["BookId"]; ?>" >Submit</button>
+					</label>	
+
 				</form>
 			
 			</div>
