@@ -325,9 +325,90 @@ if ($_POST['submitBook']){
 		}
 }
 
-// handling of submit gross margin feature
+// handling of submit margin
+if ($_POST["margin"]) { 
+	
+	// update column in SelectedBooks
+	$query = 	"UPDATE SelectedBooks 
+				SET `margin` = '" . $_POST['margin'] . "'
+				WHERE `BookID` = '" . $_POST['submitMargin'] . "' ";
+	$call = $db->query($query);
 
-// Handling of update margin feature
+		// if errors echo them
+		if (!$call){
+			echo $db->error . '</br>'. '</br>';
+		}
+	
+	// get wholesale price from database
+
+	$query= "SELECT Price FROM SelectedBooks 
+			WHERE BookId = '" . $_POST['submitMargin'] . "'";
+	$call = $db->query($query);
+	
+		// echo if errors
+		if (!$call){
+			echo $db->error . '</br>'. '</br>';
+		}
+
+	$callArray = $call->fetch_array();	
+	$wholesalePrice = json_decode($callArray["Price"]);
+	$wholesalePrice = $wholesalePrice->_;
+
+
+	// calculate new retail price
+
+	$retailPrice = $wholesalePrice * $_POST['margin'] ;
+
+
+	// insert new retail price in database
+
+	$query = 	"UPDATE SelectedBooks 
+				SET `retailPrice` = '" . $retailPrice . "'
+				WHERE `BookID` = '" . $_POST['submitMargin'] . "' ";
+
+	$call = $db->query($query);
+
+		// if errors echo them
+		if (!$call){
+			echo $db->error . '</br>'. '</br>';
+		}
+
+	// insert in shopify
+
+		// get product ID where sku is equal to BookId
+		$query= "SELECT ShopifyBookId, Title FROM SelectedBooks 
+				WHERE BookId = '" . $_POST['submitMargin'] . "'";
+		$call = $db->query($query);
+		
+			// echo if errors
+			if (!$call){
+				echo $db->error . '</br>'. '</br>';
+			}
+			
+		$callArray = $call->fetch_array();	
+		$productId = $callArray["ShopifyBookId"];
+			
+		// get products variants ID
+		$array = array("fields"=>"variants"); 
+		$productsArray = getProductById($productId, $array);
+		$variantsArray = $productsArray['variants'][0];
+		$variantId = $variantsArray['id'];
+				
+		// insert new price in variant
+		$arguments = array
+		        (
+		            "variant"=>array
+		            (
+						"price"=>$retailPrice
+		            )
+		        );
+				
+		updateVariant($variantId,$arguments);
+
+
+}
+
+// Handling of update standard margin feature
 if ($_POST["submitStandardMargin"]) { 
 	
 	// update column in SelectedBooks
