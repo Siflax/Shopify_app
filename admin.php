@@ -408,6 +408,96 @@ if ($_POST["margin"]) {
 
 }
 
+// handling of reset margin
+if ($_POST["resetMargin"]) { 
+	
+	// get standard margin
+	$query= "SELECT generalGrossMargin FROM BusinessSettings";
+	$call = $db->query($query);
+	$callArray = $call->fetch_array();	
+	$standardMargin = $callArray[0];
+
+	// update column in SelectedBooks
+	$query = 	"UPDATE SelectedBooks 
+				SET `margin` = '" . $standardMargin . "'
+				WHERE `BookID` = '" . $_POST['resetMargin'] . "' ";
+	$call = $db->query($query);
+
+		// if errors echo them
+		if (!$call){
+			echo $db->error . '</br>'. '</br>';
+		}
+	
+	// get wholesale price from database
+
+	$query= "SELECT Price FROM SelectedBooks 
+			WHERE BookId = '" . $_POST['resetMargin'] . "'";
+	$call = $db->query($query);
+	
+		// echo if errors
+		if (!$call){
+			echo $db->error . '</br>'. '</br>';
+		}
+
+	$callArray = $call->fetch_array();	
+	$wholesalePrice = json_decode($callArray["Price"]);
+	$wholesalePrice = $wholesalePrice->_;
+
+
+	// calculate new retail price
+
+	$retailPrice = $wholesalePrice * $standardMargin ;
+
+
+	// insert new retail price in database
+
+	$query = 	"UPDATE SelectedBooks 
+				SET `retailPrice` = '" . $retailPrice . "'
+				WHERE `BookID` = '" . $_POST['resetMargin'] . "' ";
+
+	$call = $db->query($query);
+
+		// if errors echo them
+		if (!$call){
+			echo $db->error . '</br>'. '</br>';
+		}
+
+	// insert in shopify
+
+		// get product ID where sku is equal to BookId
+		$query= "SELECT ShopifyBookId, Title FROM SelectedBooks 
+				WHERE BookId = '" . $_POST['resetMargin'] . "'";
+		$call = $db->query($query);
+		
+			// echo if errors
+			if (!$call){
+				echo $db->error . '</br>'. '</br>';
+			}
+			
+		$callArray = $call->fetch_array();	
+
+		$productId = $callArray["ShopifyBookId"];
+
+		
+		// get products variants ID
+		$array = array("fields"=>"variants"); 
+		$productsArray = getProductById($productId, $array);
+		$variantsArray = $productsArray['variants'][0];
+		$variantId = $variantsArray['id'];
+			
+		// insert new price in variant
+		$arguments = array
+		        (
+		            "variant"=>array
+		            (
+						"price"=>$retailPrice
+		            )
+		        );
+				
+		updateVariant($variantId,$arguments);
+
+}
+
 // Handling of update standard margin feature
 if ($_POST["submitStandardMargin"]) { 
 	
@@ -480,7 +570,7 @@ $standardMargin = $standardMargin["generalGrossMargin"];
 			<form id="standardMargin" name="standardMargin" method="post" action="">			
 				
 					<label> Standard margin
-						<input type="text" name="standardMargin" id="standardMargin" value= " <?php echo $standardMargin; ?> "/>
+						<input type="text" name="standardMargin" id="standardMargin" value= "<?php echo $standardMargin; ?> "/>
 					</label>
 			
 					<label>
@@ -528,6 +618,14 @@ $standardMargin = $standardMargin["generalGrossMargin"];
 					</label>	
 
 				</form>
+
+				<form id="resetMargin" name="resetMargin" method="post" action="">
+
+					<label>
+						<button type="resetMargin" name="resetMargin" value="<?php echo $row["BookId"]; ?>" >Reset Margin</button>
+					</label>	
+
+				</form>	
 			
 			</div>
 			
